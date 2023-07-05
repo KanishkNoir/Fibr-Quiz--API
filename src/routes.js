@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Question = require('./models/Question')
 
-// creating a question
+//creating a question
 router.post('/questions', async (req, res) => {
     try {
         const { description } = req.body
