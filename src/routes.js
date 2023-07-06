@@ -1,39 +1,25 @@
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
-const Question = require('./models/Question')
+const Question = require('../models/Question')
 
 //creating one question
 
-router.post('/questions', async(req, res) => {
+router.post('/questions', async (req, res) => {
     const {description, alternatives} = req.body
 	try {
-		const newQuestion = await Question.create({description, alternatives});
+		const newQuestion = await Question.create({
+            description,
+            alternatives
+        })
 
         newQuestion.save().then(() =>{
-            res.status(201).json({message: 'Question saves succesfully'})
+            res.status(201).json(newQuestion)
         })
 	} catch (error){
 		return res.status(500).json({"error": error})
 	}
 })
-
-// router.post('/questions', (req, res) => {
-//     const { description, alternatives } = req.body;
-  
-//     const newQuestion = new Question.create({
-//       description,
-//       alternatives,
-//     });
-  
-//     newQuestion.save()
-//       .then(() => {
-//         res.status(201).json({ message: 'Question saved successfully' });
-//       })
-//       .catch((error) => {
-//         res.status(500).json({ error: 'Error saving question' });
-//       });
-//   });
 
 //get all questions
 router.get('/questions', async (req,res)=>{
