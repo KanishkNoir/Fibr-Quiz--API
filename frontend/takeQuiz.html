@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz App - Quiz Questions</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .btn-logout {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-decoration: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .btn-logout:hover {
+      opacity: 0.8;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .question {
+      margin-bottom: 20px;
+    }
+
+    .options label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .submit-button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .submit-button:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="btn-logout" href="#">Logout</a>
+  </header>
+
+  <h1>Quiz App - Quiz Questions</h1>
+
+  <div id="quiz-questions"></div>
+
+  <button class="submit-button">Submit Quiz</button>
+
+  <script>
+    // Get the quizId from the URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const quizId = urlParams.get("quizId");
+
+    // Function to fetch quiz questions based on quizId
+    function fetchQuizQuestions() {
+      // Use a GET request to fetch quiz questions from the API
+      // Replace the API_URL with the actual API endpoint
+      const API_URL = `http://localhost:4444/quiz/${quizId}`;
+
+      fetch(API_URL)
+        .then(response => response.json())
+        .then(data => displayQuizQuestions(data.questionnaire))
+        .catch(error => console.log(error));
+    }
+
+    // Function to display quiz questions and options
+    function displayQuizQuestions(questions) {
+      const quizQuestionsElement = document.getElementById("quiz-questions");
+
+      // Loop through each question and create the HTML structure
+      questions.forEach(question => {
+        const questionElement = document.createElement("div");
+        questionElement.classList.add("question");
+
+        const questionId = question._id._id;
+        const questionDescription = question._id.description;
+        const alternatives = question._id.alternatives;
+
+        const questionTitleElement = document.createElement("h3");
+        questionTitleElement.textContent = questionDescription;
+
+        const optionsElement = document.createElement("div");
+        optionsElement.classList.add("options");
+
+        alternatives.forEach(option => {
+          const labelElement = document.createElement("label");
+
+          const checkboxElement = document.createElement("input");
+          checkboxElement.type = "checkbox";
+          checkboxElement.value = option.text;
+          checkboxElement.dataset.questionId = questionId;
+          checkboxElement.dataset.optionId = option._id;
+          checkboxElement.dataset.isCorrect = option.isCorrect;
+
+          const optionText = document.createTextNode(option.text);
+
+          labelElement.appendChild(checkboxElement);
+          labelElement.appendChild(optionText);
+
+          optionsElement.appendChild(labelElement);
+        });
+
+        questionElement.appendChild(questionTitleElement);
+        questionElement.appendChild(optionsElement);
+
+        quizQuestionsElement.appendChild(questionElement);
+      });
+    }
+
+    // Function to calculate and display the marks obtained
+    function calculateMarks() {
+      const quizQuestions = document.querySelectorAll(".question");
+      let correctAnswers = 0;
+
+      quizQuestions.forEach(question => {
+        const questionId = question.querySelector("input[type='checkbox']").dataset.questionId;
+        const selectedOptions = Array.from(question.querySelectorAll("input[type='checkbox']:checked"));
+
+        const isCorrect = selectedOptions.every(option => option.dataset.isCorrect === "true");
+
+        if (isCorrect) {
+          correctAnswers++;
+        }
+      });
+
+      const totalQuestions = quizQuestions.length;
+      const marksObtained = (correctAnswers / totalQuestions) * 100;
+
+      alert(`You obtained ${marksObtained}% marks!`);
+    }
+
+    // Event listener for the "Submit Quiz" button
+    document.querySelector(".submit-button").addEventListener("click", calculateMarks);
+
+    // Call the fetchQuizQuestions function when the page loads
+    window.addEventListener("load", fetchQuizQuestions);
+  </script>
+</body>
+</html>

@@ -124,7 +124,7 @@ router.post('/quiz', (req, res) => {
   })
 
 
-//get a quiz
+//get a quiz by id
   router.get('/quiz/:id', async (req, res) => {
     const id = req.params.id;
   
@@ -142,6 +142,15 @@ router.post('/quiz', (req, res) => {
     }
   });
   
+  //get all quiz
+  router.get('/quiz', async (req,res)=>{
+    try{
+        const quizzes = await Quiz.find()
+        return res.status(200).json(quizzes)
+    }catch(error){
+        return res.status(500).json({"error": error})
+    }
+})
 
 //delete a quiz
 router.delete('/quiz/:quizId', async (req, res) => {

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz Builder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+  
+    h1 {
+      text-align: center;
+    }
+  
+    #add-question-btn {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+  
+    #quiz-name-label {
+      font-weight: bold;
+    }
+  
+    #quiz-name-input {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 20px;
+    }
+  
+    #questions-container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+  
+    #questions-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+  
+    #questions-table th,
+    #questions-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+  
+    #questions-table th {
+      background-color: #f2f2f2;
+    }
+  
+    #create-quiz-btn {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  
+    #create-quiz-btn:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <a href="./addQuestion.html">
+    <button type="button" id="add-question-btn">Add a Question</button>
+  </a>
+  <h1>Quiz Builder</h1>
+  <div id="questions-container">
+    <table id="questions-table">
+      <thead>
+        <tr>
+          <th>Question ID</th>
+          <th>Question Description</th>
+          <th>Select</th>
+        </tr>
+      </thead>
+      <tbody id="questions-body"></tbody>
+    </table>
+    <label id="quiz-name-label" for="quiz-name-input">Quiz Name:</label>
+    <input type="text" id="quiz-name-input" name="quiz-name" required>
+    <a href="./dashboard.html">
+      <button type="button" id="create-quiz-btn">Create Quiz</button>
+    </a>
+  </div>
+
+  <script>
+    // Make a GET request to the API
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "http://localhost:4444/questions", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var questions = JSON.parse(xhr.responseText);
+        displayQuestions(questions);
+      }
+    };
+    xhr.send();
+
+    function displayQuestions(questions) {
+      var tableBody = document.getElementById("questions-body");
+      tableBody.innerHTML = "";
+
+      questions.forEach(function(question, index) {
+        var row = document.createElement("tr");
+        var questionIdCell = document.createElement("td");
+        var questionDescCell = document.createElement("td");
+        var selectCell = document.createElement("td");
+        var questionId = question._id;
+
+        questionIdCell.textContent = questionId;
+        questionDescCell.textContent = question.description;
+
+        var selectCheckbox = document.createElement("input");
+        selectCheckbox.type = "checkbox";
+        selectCheckbox.value = questionId;
+        selectCell.appendChild(selectCheckbox);
+
+        row.appendChild(questionIdCell);
+        row.appendChild(questionDescCell);
+        row.appendChild(selectCell);
+        tableBody.appendChild(row);
+      });
+    }
+
+    document.getElementById("create-quiz-btn").addEventListener("click", function() {
+      var selectedQuestionIds = Array.from(document.querySelectorAll("#questions-body input[type='checkbox']:checked")).map(function(checkbox) {
+        return checkbox.value;
+      });
+
+      var quizName = document.getElementById("quiz-name-input").value;
+
+      var postData = {
+        topic: quizName,
+        questionnaire: selectedQuestionIds
+      };
+
+      // Make a POST request to the different API with quiz data
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://localhost:4444/quiz", true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          console.log("Quiz created successfully!");
+        }
+      };
+      xhr.send(JSON.stringify(postData));
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+  
+    h1 {
+      text-align: center;
+    }
+  
+    header {
+      display: flex;
+      background-color: gray;
+      border-radius: 10px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+  
+    .btn-home {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      text-decoration: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  
+    .btn-logout {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      text-decoration: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  
+    .btn-home:hover, .btn-logout:hover {
+      opacity: 0.8;
+    }
+  
+    .create-quiz-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  
+    .create-quiz-btn:hover {
+      opacity: 0.8;
+    }
+  
+    #quizzes-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+  
+    #quizzes-table th,
+    #quizzes-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+  
+    #quizzes-table th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="btn-home" href="#">Home</a>
+    <span id="person-name">John Doe</span>
+    <a class="btn-logout" href="#">Logout</a>
+  </header>
+  
+  <h1>Quizzes</h1>
+  
+  <table id="quizzes-table">
+    <thead>
+      <tr>
+        <th>Quiz name</th>
+        <th>Quiz ID</th>
+      </tr>
+    </thead>
+    <tbody id="quizzes-body"></tbody>
+  </table>
+  
+  <a href="./createQuiz.html">
+    <button class="create-quiz-btn">Create New Quiz</button>
+  </a>
+
+  <script>
+    function fetchQuizzes() {
+      // Make a GET request to the API
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "http://localhost:4444/quiz", true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var quizzes = JSON.parse(xhr.responseText);
+          displayQuizzes(quizzes);
+        }
+      };
+      xhr.send();
+    }
+  
+    function displayQuizzes(quizzes) {
+      var tableBody = document.getElementById("quizzes-body");
+      tableBody.innerHTML = "";
+  
+      quizzes.forEach(function(quiz) {
+        var row = document.createElement("tr");
+        var quizNameCell = document.createElement("td");
+        var quizIdCell = document.createElement("td");
+  
+        quizNameCell.textContent = quiz.topic;
+        quizIdCell.textContent = quiz._id;
+  
+        row.appendChild(quizNameCell);
+        row.appendChild(quizIdCell);
+        tableBody.appendChild(row);
+      });
+    }
+  
+    fetchQuizzes();
+  
+    document.querySelector(".create-quiz-btn").addEventListener("click", function() {
+      // Add your logic for creating a quiz here
+      console.log("Creating a quiz...");
+    });
+  </script>
+</body>
+</html>

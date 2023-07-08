@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Question</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+  
+    h1 {
+      text-align: center;
+    }
+  
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+  
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+  
+    input[type="text"] {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+  
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Add Question</h1>
+  <form id="question-form">
+    <label for="question-name">Question name:</label>
+    <input type="text" id="question-name" name="question-name" required>
+  
+    <label for="option1">Option 1:</label>
+    <input type="text" id="option1" name="option1" required>
+    <input type="checkbox" id="option1-correct" name="option1-correct">
+    <label for="option1-correct">Correct</label>
+  
+    <label for="option2">Option 2:</label>
+    <input type="text" id="option2" name="option2" required>
+    <input type="checkbox" id="option2-correct" name="option2-correct">
+    <label for="option2-correct">Correct</label>
+  
+    <label for="option3">Option 3:</label>
+    <input type="text" id="option3" name="option3" required>
+    <input type="checkbox" id="option3-correct" name="option3-correct">
+    <label for="option3-correct">Correct</label>
+  
+    <label for="option4">Option 4:</label>
+    <input type="text" id="option4" name="option4" required>
+    <input type="checkbox" id="option4-correct" name="option4-correct">
+    <label for="option4-correct">Correct</label>
+    
+    <a href="./addQuestion.html">
+        <button type="submit" id="add-question-btn">Add Question</button>
+    </a>
+  </form>
+  
+  <script>
+    document.getElementById("question-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+  
+      var questionName = document.getElementById("question-name").value;
+  
+      var options = [
+        {
+          text: document.getElementById("option1").value,
+          isCorrect: document.getElementById("option1-correct").checked
+        },
+        {
+          text: document.getElementById("option2").value,
+          isCorrect: document.getElementById("option2-correct").checked
+        },
+        {
+          text: document.getElementById("option3").value,
+          isCorrect: document.getElementById("option3-correct").checked
+        },
+        {
+          text: document.getElementById("option4").value,
+          isCorrect: document.getElementById("option4-correct").checked
+        }
+      ];
+  
+      var postData = {
+        description: questionName,
+        alternatives: options
+      };
+  
+      // Make a POST request to the API
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://localhost:4444/questions", true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          console.log("Question added successfully!");
+        }
+      };
+      xhr.send(JSON.stringify(postData));
+    });
+  </script>
+</body>
+</html>

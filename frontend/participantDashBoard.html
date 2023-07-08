@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz App - Home</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      background-color: gray;
+    }
+
+    .btn-home {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-decoration: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .btn-logout {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-decoration: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .btn-home:hover,
+    .btn-logout:hover {
+      opacity: 0.8;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      font-size: 16px;
+      width: 300px;
+      margin-bottom: 10px;
+    }
+
+    .btn-take-quiz {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .btn-take-quiz:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="btn-home" href="#">Home</a>
+    <span id="person-name">John Doe</span>
+    <a class="btn-logout" href="#">Logout</a>
+  </header>
+
+  <h1>Quiz App</h1>
+
+  <input type="text" id="quiz-id-input" placeholder="Enter Quiz ID">
+  <button class="btn-take-quiz">Take the Quiz</button>
+
+  <script>
+    document.querySelector(".btn-home").addEventListener("click", function(event) {
+      event.preventDefault();
+      location.reload();
+    });
+
+    document.querySelector(".btn-take-quiz").addEventListener("click", function() {
+      var quizId = document.getElementById("quiz-id-input").value;
+      if (quizId) {
+        // Redirect to the second webpage with the quiz ID as a parameter in the URL
+        window.location.href = "takeQuiz.html?quizId=" + quizId;
+      }
+    });
+  </script>
+</body>
+</html>
