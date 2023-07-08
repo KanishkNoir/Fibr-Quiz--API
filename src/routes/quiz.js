@@ -80,40 +80,36 @@ router.get('/users', async (req,res)=>{
 
 //delete user
 router.delete('/users/:id', async (req, res) =>{
-    try{
-        const _id =req.params.id
-        const user =await User.deleteOne({_id})
-    if(user.deletedCount===0){
-        return res.status(404).json("There are 0 users in database with this id.")
-    }
-    else{
-        return res.status(204).json("User deleted successfuly!")
-    }
-    }catch(error){
-            return res.status(500).json({"error": error})
+    const _id =req.params.id
+    try {
+        const deletedUser = await User.findByIdAndRemove(_id);
+    
+        if (!deletedUser) {
+          return res.status(404).json({ error: 'User not found.' })
         }
-})
+    
+        res.json({ message: 'User deleted successfully.' })
+      } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Failed to delete user.' })
+      }
+    })
 
 //post a quiz
 router.post('/quiz', (req, res) => {
     const { topic, questionnaire } = req.body
-  
-    // Create an array to store the populated question documents
-    const populatedQuestions = []
 
     // Fetch the question documents based on the provided question IDs
-    Question.find({ _id: { $in: questions } })
+    Question.find({ _id: { $in: questionnaire } })
     .then(foundQuestions => {
     
-    if (foundQuestions.length !== questions.length) {
-      return res.status(400).json({ error: 'Invalid question ID(s).' });
+    if (foundQuestions.length !== questionnaire.length) {
+      return res.status(400).json({ error: 'Invalid question ID(s).' })
     }
-
-    populatedQuestions.push(...foundQuestions);
 
     const newQuiz = new Quiz({
         topic,
-        questionnaire: populatedQuestions
+        questionnaire: foundQuestions
     })
   
     return newQuiz.save()
@@ -129,37 +125,41 @@ router.post('/quiz', (req, res) => {
 
 
 //get a quiz
-router.get('/quiz/:id', (req, res) => {
-    const quizId = req.params.id;
+  router.get('/quiz/:id', async (req, res) => {
+    const id = req.params.id;
   
-    Quiz.findById(id)
-      .populate('questions')
-      .exec((error, quiz) => {
-        if (error) {
-          console.error(error);
-          return res.status(500).json({ error: 'Failed to fetch quiz.' });
-        }
-        if (!quiz) {
-          return res.status(404).json({ error: 'Quiz not found.' });
-        }
-        res.json(quiz);
-      });
+    try {
+      const quiz = await Quiz.findById(id).populate('questionnaire._id');
+  
+      if (!quiz) {
+        return res.status(404).json({ error: 'Quiz not found.' });
+      }
+  
+      res.json(quiz);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to retrieve quiz.' });
+    }
   });
+  
 
 //delete a quiz
-router.delete('/quiz/:id', async (req, res) =>{
-    try{
-        const _id =req.params.id
-        const quiz =await Quiz.deleteOne({_id})
-    if(quiz.deletedCount===0){
-        return res.status(404).json("No Quiz.")
+router.delete('/quiz/:quizId', async (req, res) => {
+    const quizId = req.params.quizId
+  
+    try {
+      const deletedQuiz = await Quiz.findByIdAndRemove(quizId)
+  
+      if (!deletedQuiz) {
+        return res.status(404).json({ error: 'Quiz not found.' })
+      }
+  
+      res.json({ message: 'Quiz deleted successfully.' })
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ error: 'Failed to delete quiz.' })
     }
-    else{
-        return res.status(204).json("Quiz deleted successfuly!")
-    }
-    }catch(error){
-            return res.status(500).json({"error": error})
-        }
-})
+  })
+
 
 module.exports = router
