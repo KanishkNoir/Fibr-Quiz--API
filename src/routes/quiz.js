@@ -50,12 +50,11 @@ router.delete('/questions/:id', async (req, res) =>{
 
 //creating one user
 router.post('/users', async (req, res) => {
-    const {name, email, password, isDeactivated, role} = req.body
+    const {name, email, isDeactivated, role} = req.body
 	try {
 		const newUser = await User.create({
             name,
             email,
-            password,
             isDeactivated,
             role
         })

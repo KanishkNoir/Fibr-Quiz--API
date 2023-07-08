@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Page</title>
+</head>
+<body>
+  <h1>Welcome</h1>
+
+  <p id="name"></p>
+
+  <form id="roleForm">
+    <label for="userRole">Who are you?</label><br>
+    <input type="radio" id="userRole" name="role" value="user" checked>
+    <label for="userRole">User</label><br>
+    <input type="radio" id="othersRole" name="role" value="others">
+    <label for="othersRole">Others</label><br>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    const nameElement = document.getElementById('name');
+    const roleForm = document.getElementById('roleForm');
+
+    // Get the name and email from the URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const name = urlParams.get('name');
+    const email = urlParams.get('email');
+
+    // Display the name on the page
+    nameElement.textContent = `Welcome, ${name}`;
+
+    // Handle form submission
+    roleForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      // Get the selected role
+      const role = document.querySelector('input[name="role"]:checked').value;
+
+      // Create the payload for the POST request
+      const payload = {
+        name: name,
+        email: email,
+        role: role
+      };
+
+      // Make a POST request to the API
+      fetch('http://localhost:4444/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Redirect to the appropriate page based on the role
+        if (role === 'user') {
+          window.location.href = `dashboard.html?name=${name}`;
+        } else {
+          window.location.href = `participantDashBoard.html?name=${name}`;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+</html>
